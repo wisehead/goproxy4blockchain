@@ -47,4 +47,27 @@ xxx rpcResp.Result.state:1002
 2018-04-07 12:44:35.402 INFO BlockChain Proxy Version: 1.0.0.0 - build-2018-04-07 12:01:00
 Waiting for clients2018-04-07 12:47:32.214 INFO BlockChain Proxy Version: 1.0.0.0 - build-2018-04-07 12:01:00
 Waiting for clients2018-04-07 12:47:57.345 INFO BlockChain Proxy Version: 1.0.0.0 - build-2018-04-07 12:01:00
-Waiting for clientsWaiting for clients
+Waiting for clientsWaiting for clients2018/04/07 13:17:35 Waiting for clients
+[Info]2018/04/07 13:17:35 Waiting for clients
+2018/04/07 13:17:54 Waiting for clients
+[Info]2018/04/07 13:17:54 Waiting for clients
+2018/04/07 13:18:37 127.0.0.1:61561  tcp connect success
+2018/04/07 13:18:37 receive data string: {"meta":{"ID":"0","meta":"test"},"content":{"meta":{"author":"nucky lu"},"content":"1523078317"}}
+2018/04/07 13:18:37 echo the message: {"meta":{"ID":"0","meta":"test"},"content":{"content":"1523078317","meta":{"author":"nucky lu"}}}
+2018/04/07 13:18:37 127.0.0.1:61561 get message, keeping heartbeating...
+2018/04/07 13:18:38 receive data string: {"meta":{"ID":"1","meta":"test"},"content":{"meta":{"author":"nucky lu"},"content":"1523078318"}}
+2018/04/07 13:18:38 echo the message: {"meta":{"ID":"1","meta":"test"},"content":{"content":"1523078318","meta":{"author":"nucky lu"}}}
+2018/04/07 13:18:38 127.0.0.1:61561 get message, keeping heartbeating...
+2018/04/07 13:18:39 receive data string: {"meta":{"ID":"2","meta":"test"},"content":{"meta":{"author":"nucky lu"},"content":"1523078319"}}
+2018/04/07 13:18:39 echo the message: {"meta":{"ID":"2","meta":"test"},"content":{"content":"1523078319","meta":{"author":"nucky lu"}}}
+2018/04/07 13:18:39 127.0.0.1:61561 get message, keeping heartbeating...
+2018/04/07 13:18:40 receive data string: {"meta":{"ID":"3","meta":"test"},"content":{"meta":{"author":"nucky lu"},"content":"1523078320"}}
+2018/04/07 13:18:40 echo the message: {"meta":{"ID":"3","meta":"test"},"content":{"content":"1523078320","meta":{"author":"nucky lu"}}}
+2018/04/07 13:18:40 127.0.0.1:61561 get message, keeping heartbeating...
+2018/04/07 13:18:41 receive data string: {"meta":{"ID":"4","meta":"test"},"content":{"meta":{"author":"nucky lu"},"content":"1523078321"}}
+2018/04/07 13:18:41 echo the message: {"meta":{"ID":"4","meta":"test"},"content":{"content":"1523078321","meta":{"author":"nucky lu"}}}
+2018/04/07 13:18:41 127.0.0.1:61561 get message, keeping heartbeating...
+2018/04/07 13:18:42 receive data string: {"meta":{"ID":"5","meta":"test"},"content":{"meta":{"author":"nucky lu"},"content":"1523078322"}}
+2018/04/07 13:18:42 echo the message: {"meta":{"ID":"5","meta":"test"},"content":{"content":"1523078322","meta":{"author":"nucky lu"}}}
+2018/04/07 13:18:42 127.0.0.1:61561 get message, keeping heartbeating...
+2018/04/07 13:18:43 127.0.0.1:61561  connection error:  EOF
