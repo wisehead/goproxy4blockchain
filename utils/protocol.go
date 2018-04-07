@@ -1,4 +1,3 @@
-
 package utils
 
 import (
@@ -6,25 +5,24 @@ import (
 	"encoding/binary"
 )
 
-
 /* A custom communication protocol between server and client;
    All the message will be composed by  header + the length of whole message(4 byte int) + message content;
    If the header is wrong or the length of message doesn't match, the message wouldn't be decoded
 
    一个简单的通讯协议，由 header + 信息长度 ＋ 信息内容组成
 */
-
 const (
-	ConstHeader         = "testHeader"
-	ConstHeaderLength   = 10
-	ConstMLength = 4
+	ConstHeader       = "testHeader"
+	ConstHeaderLength = 10
+	ConstMLength      = 4
 )
 
+//Enpack is to encode row message
 func Enpack(message []byte) []byte {
 	return append(append([]byte(ConstHeader), IntToBytes(len(message))...), message...)
 }
 
-
+//Depack is to decode raw message
 func Depack(buffer []byte) []byte {
 	length := len(buffer)
 
@@ -50,6 +48,7 @@ func Depack(buffer []byte) []byte {
 	return data
 }
 
+//IntToBytes is a utility for encode/decode
 func IntToBytes(n int) []byte {
 	x := int32(n)
 
@@ -58,7 +57,7 @@ func IntToBytes(n int) []byte {
 	return bytesBuffer.Bytes()
 }
 
-
+//BytesToInt is a utility for encode/decode
 func BytesToInt(b []byte) int {
 	bytesBuffer := bytes.NewBuffer(b)
 
@@ -66,4 +65,4 @@ func BytesToInt(b []byte) int {
 	binary.Read(bytesBuffer, binary.BigEndian, &x)
 
 	return int(x)
-}  
+}
