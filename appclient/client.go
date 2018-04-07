@@ -17,20 +17,39 @@ type Msg struct {
 	Content interface{}            `json:"content"`
 }
 
+// RPCRequest represents a JSON-RPC request object.
+type RPCRequest struct {
+	Method  string      `json:"method"`
+	Params  interface{} `json:"params,omitempty"`
+	ID      uint        `json:"id"` //chenhui
+	JSONRPC string      `json:"jsonrpc"`
+}
+
 func send(conn net.Conn) {
 	for i := 0; i < 6; i++ {
-		session := GetSession()
+		//session := GetSession()
 		message := &Msg{
 			Meta: map[string]interface{}{
 				"meta": "test",
 				"ID":   strconv.Itoa(i),
 			},
-			Content: Msg{
-				Meta: map[string]interface{}{
-					"author": "nucky lu",
+			Content: RPCRequest{
+				Method: "source-state",
+				Params: map[string]interface{}{
+					"key":     "00000000000000000000000000000001",
+					"channel": "vvtrip",
 				},
-				Content: session,
+				ID:      0,
+				JSONRPC: "2.0",
 			},
+			/*
+				Content: Msg{
+					Meta: map[string]interface{}{
+						"author": "nucky lu",
+					},
+					Content: session,
+				},
+			*/
 		}
 		result, _ := json.Marshal(message)
 		conn.Write(utils.Enpack((result)))

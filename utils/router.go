@@ -13,11 +13,26 @@ import (
 //我在Server的内部加入一层Router,通过Router对通过Socket发来的信息，通过我们设定的规则进行解析判断后，调用相关的Controller进行任务的分发处理。
 //在这个过程中不仅Controller彼此独立，匹配规则和Controller之间也是相互独立的。
 
+// RPCRequest represents a JSON-RPC request object.
+type RPCRequest struct {
+	Method  string      `json:"method"`
+	Params  interface{} `json:"params,omitempty"`
+	ID      uint        `json:"id"` //chenhui
+	JSONRPC string      `json:"jsonrpc"`
+}
+
 //Msg defined between app client and goproxy4blockchain
+type Msg struct {
+	Meta    map[string]interface{} `json:"meta"`
+	Content RPCRequest             `json:"content"`
+}
+
+/*
 type Msg struct {
 	Meta    map[string]interface{} `json:"meta"`
 	Content interface{}            `json:"content"`
 }
+*/
 
 //Controller is an interface, you can implement by yourself.
 type Controller interface {
@@ -71,6 +86,22 @@ func TaskDeliver(postdata []byte, conn net.Conn) {
 		if err != nil {
 			Log(err)
 		}
+
+		rpcRequest := entermsg.Content
+		Log("xxx parsing the JSONRPC2.0 message from app client...")
+		id := rpcRequest.ID
+		Log("xxx rpcRequest.id:", id)
+		jsonrpc := rpcRequest.JSONRPC
+		Log("xxx rpcRequest.jsonrpc:", jsonrpc)
+		method := rpcRequest.Method
+		Log("xxx rpcRequest.Method:", method)
+
+		f := rpcRequest.Params
+		key := f.(map[string]interface{})["key"].(string)
+		Log("rpcRequest.Params.Key:", key)
+		channel := f.(map[string]interface{})["channel"].(string)
+		Log("rpcRequest.Params.Channel:", channel)
+
 		if pred.(func(entermsg Msg) bool)(entermsg) {
 			result := act.(Controller).Excute(entermsg)
 			conn.Write(result)
