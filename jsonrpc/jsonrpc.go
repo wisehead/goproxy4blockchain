@@ -91,8 +91,9 @@ type RPCRequest struct {
 //
 // See: http://www.jsonrpc.org/specification#response_object
 type RPCResponse struct {
-	JSONRPC string      `json:"jsonrpc"`
-	Result  interface{} `json:"result,omitempty"`
+	JSONRPC string `json:"jsonrpc"`
+	//Result  interface{} `json:"result,omitempty"`
+	Result map[string]interface{} `json:"result,omitempty"`
 	//Result *json.RawMessage `json:"result,omitempty"`
 	Error *RPCError `json:"error,omitempty"`
 	ID    uint      `json:"id"`
@@ -262,10 +263,31 @@ func (client *rpcClient) doCall(RPCRequest *RPCRequest) (*RPCResponse, error) {
 	defer httpResponse.Body.Close()
 
 	var rpcResponse *RPCResponse
-	decoder := json.NewDecoder(httpResponse.Body)
-	decoder.DisallowUnknownFields()
-	decoder.UseNumber()
-	err = decoder.Decode(&rpcResponse)
+
+	//chenhui
+	var rpcResp = new(RPCResponse)
+	//buf := make([]byte, 1024)
+	//httpResponse.Body.Read(buf)
+	json.Unmarshal(result, &rpcResp)
+	fmt.Printf("xxx rpcResp:%v\n", rpcResp)
+	/*
+		id := rpcResp.ID
+		fmt.Printf("xxx rpcResp.id:%v\n", id)
+		jsonrpc := rpcResp.JSONRPC
+		fmt.Printf("xxx rpcResp.jsonrpc:%v\n", jsonrpc)
+		rpcresult := rpcResp.Result
+		state := rpcresult["state"].(string)
+		fmt.Printf("xxx rpcResp.Result.state:%v\n", state)
+	*/
+
+	rpcResponse = rpcResp
+	fmt.Printf("xxx rpcResponse:%v\n", rpcResponse)
+	/*
+		decoder := json.NewDecoder(httpResponse.Body)
+		decoder.DisallowUnknownFields()
+		decoder.UseNumber()
+		err = decoder.Decode(&rpcResponse)
+	*/
 
 	// parsing error
 	if err != nil && err.Error() != "EOF" {

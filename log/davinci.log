@@ -10,3 +10,41 @@ person is nil!
 xxx rpcClient :body is: {"method":"source-state","params":[4711],"jsonrpc":"2.0"}
 2018-04-05 17:31:56.469 ERRO rpcClient.CallFor failed: -32603:Internal error
 person is nil!
+xxx rpcClient :body is: {"method":"source-state","params":{"channel":"vvtrip","key":"00000000000000000000000000000001"},"id":0,"jsonrpc":"2.0"}]
+xxx doCall :httpResponse is:&{%!s(*http.body=&{0xc4201fc020 <nil> <nil> false false {0 0} false false false <nil>}) {%!s(int32=0) %!s(uint32=0)} %!s(bool=false) <nil> %!s(func(error) error=0x1204a30) %!s(func() error=0x12049c0)}
+xxx response is:{"jsonrpc":"2.0","id":0,"result":{"state":"1002"}}
+xxx rpcResp:&{2.0 map[state:1002] <nil> 0}
+xxx rpcResponse:&{2.0 map[state:1002] <nil> 0}
+xxx rpcResp.id:0
+xxx rpcResp.jsonrpc:2.0
+xxx rpcResp.Result.state:1002
+xxx rpcClient :body is: {"method":"source-state","params":{"channel":"vvtrip","key":"00000000000000000000000000000001"},"id":0,"jsonrpc":"2.0"}]
+xxx doCall :httpResponse is:&{%!s(*http.body=&{0xc4201ee020 <nil> <nil> false false {0 0} false false false <nil>}) {%!s(int32=0) %!s(uint32=0)} %!s(bool=false) <nil> %!s(func(error) error=0x1204a30) %!s(func() error=0x12049c0)}
+xxx response is:{"jsonrpc":"2.0","id":0,"result":{"state":"1002"}}
+xxx rpcResp:&{2.0 map[state:1002] <nil> 0}
+xxx rpcResponse:&{2.0 map[state:1002] <nil> 0}
+xxx rpcResp.id:0
+xxx rpcResp.jsonrpc:2.0
+xxx rpcResp.Result.state:1002
+2018-04-07 12:21:33.063 INFO BlockChain Proxy Version: 1.0.0.0 - build-2018-04-07 12:01:00
+:10399
+2018-04-07 12:38:04.152 INFO BlockChain Proxy Version: 1.0.0.0 - build-2018-04-07 12:01:00
+2018/04/07 12:38:04 Waiting for clients
+2018-04-07 12:40:54.070 INFO BlockChain Proxy Version: 1.0.0.0 - build-2018-04-07 12:01:00
+2018/04/07 12:40:54 Waiting for clients
+2018-04-07 12:41:47.570 INFO BlockChain Proxy Version: 1.0.0.0 - build-2018-04-07 12:01:00
+2018/04/07 12:41:47 Waiting for clients
+2018/04/07 12:41:54 127.0.0.1:60969  tcp connect success
+2018/04/07 12:41:54 127.0.0.1:60969 receive data string:
+ hello world!
+2018/04/07 12:41:54 127.0.0.1:60969  connection error:  EOF
+2018-04-07 12:43:08.158 INFO BlockChain Proxy Version: 1.0.0.0 - build-2018-04-07 12:01:00
+2018/04/07 12:43:08 Waiting for clients
+2018/04/07 12:43:11 127.0.0.1:60987  tcp connect success
+2018/04/07 12:43:11 127.0.0.1:60987 receive data string:
+ hello world!
+2018/04/07 12:43:11 127.0.0.1:60987  connection error:  EOF
+2018-04-07 12:44:35.402 INFO BlockChain Proxy Version: 1.0.0.0 - build-2018-04-07 12:01:00
+Waiting for clients2018-04-07 12:47:32.214 INFO BlockChain Proxy Version: 1.0.0.0 - build-2018-04-07 12:01:00
+Waiting for clients2018-04-07 12:47:57.345 INFO BlockChain Proxy Version: 1.0.0.0 - build-2018-04-07 12:01:00
+Waiting for clientsWaiting for clients
