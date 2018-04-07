@@ -6,15 +6,13 @@ import (
 	"net"
 )
 
-/*
-	in this part, we try to decouple the whole code by a route-controller structure;
-	before this server running, all the controller would be written in the router by function init();
-	when the client send a json, this server decode this json and decide which controller to process this message;
+//in this part, we try to decouple the whole code by a route-controller structure;
+//before this server running, all the controller would be written in the router by function init();
+//when the client send a json, this server decode this json and decide which controller to process this message;
 
-	我在Server的内部加入一层Router,通过Router对通过Socket发来的信息，通过我们设定的规则进行解析判断后，调用相关的Controller进行任务的分发处理。
-	在这个过程中不仅Controller彼此独立，匹配规则和Controller之间也是相互独立的。
+//我在Server的内部加入一层Router,通过Router对通过Socket发来的信息，通过我们设定的规则进行解析判断后，调用相关的Controller进行任务的分发处理。
+//在这个过程中不仅Controller彼此独立，匹配规则和Controller之间也是相互独立的。
 
-*/
 //Msg defined between app client and goproxy4blockchain
 type Msg struct {
 	Meta    map[string]interface{} `json:"meta"`
@@ -81,12 +79,11 @@ func TaskDeliver(postdata []byte, conn net.Conn) {
 	}
 }
 
-/*
-	this is a sample of how to setup a controller;
-	please pay attention: all the controller must be registered in the function init()
+//this is a sample of how to setup a controller;
+//please pay attention: all the controller must be registered in the function init()
+//一个controller实例, 注意： 所有的controller必须在init()函数内注册后才能被router分配
 
-	一个controller实例, 注意： 所有的controller必须在init()函数内注册后才能被router分配
-*/
+//EchoController is the general interface for all other controllers.
 type EchoController struct {
 }
 
