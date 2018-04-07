@@ -1,0 +1,12 @@
+2018-04-05 16:24:35.793 ERRO rpcClient.CallFor failed: -32603:Internal error
+person is nil!
+xxx rpcClient :body is: {"method":"getPersonById","params":[4711],"jsonrpc":"2.0"}2018-04-05 17:28:56.269 ERRO rpcClient.CallFor failed: -32603:Internal error
+person is nil!
+xxx rpcClient :body is: {"method":"getPersonById","params":[4711],"jsonrpc":"2.0"}2018-04-05 17:29:30.901 ERRO rpcClient.CallFor failed: -32603:Internal error
+person is nil!
+xxx rpcClient :body is: {"method":"getPersonById","params":[4711],"jsonrpc":"2.0"}
+2018-04-05 17:30:09.120 ERRO rpcClient.CallFor failed: -32603:Internal error
+person is nil!
+xxx rpcClient :body is: {"method":"source-state","params":[4711],"jsonrpc":"2.0"}
+2018-04-05 17:31:56.469 ERRO rpcClient.CallFor failed: -32603:Internal error
+person is nil!
