@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-	"goproxy4blockchain/jsonrpc"
 	"goproxy4blockchain/utils"
 	"net"
 	"runtime"
@@ -13,27 +11,6 @@ import (
 type MethodParams struct {
 	Channel string `json:"channel"`
 	Key     string `json:"key"`
-}
-
-func sendJsonrpcRequest() {
-	//rpcClient := jsonrpc.NewClient("http://my-rpc-service:8080/rpc")
-	rpcClient := jsonrpc.NewClient("https://www.ninechain.net/api/v2")
-	if rpcClient == nil {
-		fmt.Println("rpcClient is nil!")
-		return
-	}
-	rpcResp, err := rpcClient.Call("source-state", &MethodParams{Channel: "vvtrip", Key: "00000000000000000000000000000001"})
-	if err != nil {
-		//utils.LOG.Error("rpcClient.CallFor failed: " + err.Error())
-		fmt.Printf("xxx err for rpcClient.Call:%v", err.Error())
-	}
-	id := rpcResp.ID
-	fmt.Printf("xxx rpcResp.id:%v\n", id)
-	jsonrpc := rpcResp.JSONRPC
-	fmt.Printf("xxx rpcResp.jsonrpc:%v\n", jsonrpc)
-	rpcresult := rpcResp.Result
-	state := rpcresult["state"].(string)
-	fmt.Printf("xxx rpcResp.Result.state:%v\n", state)
 }
 
 func startServer(configpath string) {

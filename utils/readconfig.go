@@ -9,6 +9,7 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+//GetYamlConfig is to get config from yaml file.
 func GetYamlConfig(path string) map[interface{}]interface{} {
 	data, err := ioutil.ReadFile(path)
 	m := make(map[interface{}]interface{})
@@ -19,6 +20,7 @@ func GetYamlConfig(path string) map[interface{}]interface{} {
 	return m
 }
 
+//GetXMLConfig is to get config info from XML file.
 func GetXMLConfig(path string) map[string]string {
 	var t xml.Token
 	var err error
@@ -55,6 +57,7 @@ func GetXMLConfig(path string) map[string]string {
 	return map1
 }
 
+//GetElement is a helper function.
 func GetElement(key string, themap map[interface{}]interface{}) string {
 	if value, ok := themap[key]; ok {
 
