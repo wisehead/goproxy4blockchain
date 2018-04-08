@@ -1,6 +1,7 @@
 package main
 
 import (
+	"goproxy4blockchain/handler"
 	"goproxy4blockchain/utils"
 	"net"
 	"runtime"
@@ -68,7 +69,7 @@ func handleConnection(conn net.Conn, timeout int) {
 
 		tmpBuffer = utils.Depack(append(tmpBuffer, buffer[:n]...))
 		utils.Log("receive data string:", string(tmpBuffer))
-		utils.TaskDeliver(tmpBuffer, conn)
+		handler.TaskDeliver(tmpBuffer, conn)
 		//start heartbeating
 		go utils.HeartBeating(conn, messnager, timeout)
 		//check if get message from client

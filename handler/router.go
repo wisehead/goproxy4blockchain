@@ -1,9 +1,10 @@
-package utils
+package handler
 
 import (
 	"encoding/json"
 	"fmt"
 	"goproxy4blockchain/jsonrpc"
+	"goproxy4blockchain/utils"
 	"net"
 )
 
@@ -93,27 +94,27 @@ func TaskDeliver(postdata []byte, conn net.Conn) {
 		var entermsg Msg
 		err := json.Unmarshal(postdata, &entermsg)
 		if err != nil {
-			Log(err)
+			utils.Log(err)
 		}
 
 		rpcRequest := entermsg.Content
-		Log("xxx parsing the JSONRPC2.0 message from app client...")
+		utils.Log("xxx parsing the JSONRPC2.0 message from app client...")
 		id := rpcRequest.ID
-		Log("xxx rpcRequest.id:", id)
+		utils.Log("xxx rpcRequest.id:", id)
 		jsonrpc := rpcRequest.JSONRPC
-		Log("xxx rpcRequest.jsonrpc:", jsonrpc)
+		utils.Log("xxx rpcRequest.jsonrpc:", jsonrpc)
 		method := rpcRequest.Method
-		Log("xxx rpcRequest.Method:", method)
+		utils.Log("xxx rpcRequest.Method:", method)
 
 		f := rpcRequest.Params
 		key := f.(map[string]interface{})["key"].(string)
-		Log("rpcRequest.Params.Key:", key)
+		utils.Log("rpcRequest.Params.Key:", key)
 		channel := f.(map[string]interface{})["channel"].(string)
-		Log("rpcRequest.Params.Channel:", channel)
+		utils.Log("rpcRequest.Params.Channel:", channel)
 
 		if pred.(func(entermsg Msg) bool)(entermsg) {
 			result := act.(Controller).Excute(entermsg)
-			Log("sending result to app client: ", result)
+			utils.Log("sending result to app client: ", string(result))
 			conn.Write(result)
 			return
 		}
@@ -121,31 +122,30 @@ func TaskDeliver(postdata []byte, conn net.Conn) {
 }
 
 //sendJsonrpcRequest is to send request to block chain service.
-func sendJsonrpcRequest() (*jsonrpc.RPCResponse, error) {
+func sendJsonrpcRequest(method string) (*jsonrpc.RPCResponse, error) {
 	var err error
 	//rpcClient := jsonrpc.NewClient("http://my-rpc-service:8080/rpc")
 	rpcClient := jsonrpc.NewClient("https://www.ninechain.net/api/v2")
 	if rpcClient == nil {
 		//fmt.Println("rpcClient is nil!")
-		Log("rpcClient is nil!")
+		utils.Log("rpcClient is nil!")
 		return nil, err
 	}
-	rpcResp, err := rpcClient.Call("source-state", &MethodParams{Channel: "vvtrip", Key: "00000000000000000000000000000001"})
+	rpcResp, err := rpcClient.Call(method, &MethodParams{Channel: "vvtrip", Key: "00000000000000000000000000000001"})
 	if err != nil {
 		//utils.LOG.Error("rpcClient.CallFor failed: " + err.Error())
 		//fmt.Printf("xxx err for rpcClient.Call:%v", err.Error())
-		Log("xxx err for rpcClient.Call:", err.Error())
+		utils.Log("xxx err for rpcClient.Call:", err.Error())
 	}
 	id := rpcResp.ID
-	//fmt.Printf("xxx rpcResp.id:%v\n", id)
-	Log("xxx rpcResp.id:", id)
+	utils.Log("xxx sendJsonrpcRequest() rpcResp.id:", id)
 	jsonrpc := rpcResp.JSONRPC
-	//fmt.Printf("xxx rpcResp.jsonrpc:%v\n", jsonrpc)
-	Log("xxx rpcResp.jsonrpc:", jsonrpc)
-	rpcresult := rpcResp.Result
-	state := rpcresult["state"].(string)
-	//fmt.Printf("xxx rpcResp.Result.state:%v\n", state)
-	Log("xxx rpcResp.Result.state:", state)
+	utils.Log("xxx sendJsonrpcRequest() rpcResp.jsonrpc:", jsonrpc)
+	//rpcresult := rpcResp.Result
+	//fix-me:
+	//need serveral parser functions to parse different result structs.
+	//tx_id := rpcresult["tx_id"].(string)
+	//utils.Log("xxx sendJsonrpcRequest() rpcResp.Result.tx_id:", tx_id)
 	return rpcResp, nil
 }
 
@@ -159,11 +159,35 @@ type EchoController struct {
 
 //Excute is the function that each Controller needs to implement.
 func (echoCtrl *EchoController) Excute(message Msg) []byte {
-	//mirrormsg, err := json.Marshal(message)
-	rpcResp, err := sendJsonrpcRequest()
+	mirrormsg, err := json.Marshal(message)
+
+	var entermsg Msg
+	err = json.Unmarshal(mirrormsg, &entermsg)
+	if err != nil {
+		utils.Log(err)
+	}
+
+	rpcRequest := entermsg.Content
+	utils.Log("xxx parsing the JSONRPC2.0 message from app client...")
+	/*
+		id := rpcRequest.ID
+		Log("xxx rpcRequest.id:", id)
+		jsonrpc := rpcRequest.JSONRPC
+		Log("xxx rpcRequest.jsonrpc:", jsonrpc)
+	*/
+	method := rpcRequest.Method
+	utils.Log("xxx Excute() parsing Method:", method)
+	/*
+		f := rpcRequest.Params
+		key := f.(map[string]interface{})["key"].(string)
+		Log("rpcRequest.Params.Key:", key)
+		channel := f.(map[string]interface{})["channel"].(string)
+		Log("rpcRequest.Params.Channel:", channel)
+	*/
+	rpcResp, err := sendJsonrpcRequest(method)
 	respMsg, err := json.Marshal(rpcResp)
-	Log("echo the message:", string(respMsg))
-	CheckError(err)
+	utils.Log("echo the message:", string(respMsg))
+	utils.CheckError(err)
 	return respMsg
 }
 

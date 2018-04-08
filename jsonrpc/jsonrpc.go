@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"goproxy4blockchain/utils"
 	"io/ioutil"
 	"net/http"
 	"reflect"
@@ -91,9 +92,9 @@ type RPCRequest struct {
 //
 // See: http://www.jsonrpc.org/specification#response_object
 type RPCResponse struct {
-	JSONRPC string `json:"jsonrpc"`
-	//Result  interface{} `json:"result,omitempty"`
-	Result map[string]interface{} `json:"result,omitempty"`
+	JSONRPC string      `json:"jsonrpc"`
+	Result  interface{} `json:"result,omitempty"`
+	//Result map[string]interface{} `json:"result,omitempty"`
 	//Result *json.RawMessage `json:"result,omitempty"`
 	Error *RPCError `json:"error,omitempty"`
 	ID    uint      `json:"id"`
@@ -225,7 +226,7 @@ func (client *rpcClient) newRequest(req interface{}) (*http.Request, error) {
 	}
 
 	//B_chenhui
-	fmt.Printf("xxx rpcClient :body is: %s]\n", body)
+	//utils.Log("xxx rpcClient :body is: ", body)
 
 	request, err := http.NewRequest("POST", client.endpoint, bytes.NewReader(body))
 	if err != nil {
@@ -252,12 +253,12 @@ func (client *rpcClient) doCall(RPCRequest *RPCRequest) (*RPCResponse, error) {
 		return nil, fmt.Errorf("rpc call %v() on %v: %v", RPCRequest.Method, httpRequest.URL.String(), err.Error())
 	}
 	httpResponse, err := client.httpClient.Do(httpRequest)
-	fmt.Printf("xxx doCall :httpResponse is:%s\n", httpResponse.Body) //chenhui
+	utils.Log("xxx doCall :httpResponse is:", httpResponse.Body) //chenhui
 	result, _ := ioutil.ReadAll(httpResponse.Body)
-	fmt.Printf("xxx response is:%s\n", result)
+	utils.Log("xxx doCall() response is:", string(result))
 
 	if err != nil {
-		fmt.Printf("xxx doCall :httpResponse is error\n") //chenhui
+		utils.Log("xxx doCall :httpResponse is error") //chenhui
 		return nil, fmt.Errorf("rpc call %v() on %v: %v", RPCRequest.Method, httpRequest.URL.String(), err.Error())
 	}
 	defer httpResponse.Body.Close()
@@ -269,19 +270,22 @@ func (client *rpcClient) doCall(RPCRequest *RPCRequest) (*RPCResponse, error) {
 	//buf := make([]byte, 1024)
 	//httpResponse.Body.Read(buf)
 	json.Unmarshal(result, &rpcResp)
-	fmt.Printf("xxx rpcResp:%v\n", rpcResp)
+	utils.Log("xxx doCall() rpcResp:", rpcResp)
+
+	mirrormsg, err := json.Marshal(rpcResp)
+	utils.Log("xxx doCall() mirrormsg:", string(mirrormsg))
 	/*
 		id := rpcResp.ID
-		fmt.Printf("xxx rpcResp.id:%v\n", id)
+		utils.Log("xxx rpcResp.id:%v\n", id)
 		jsonrpc := rpcResp.JSONRPC
-		fmt.Printf("xxx rpcResp.jsonrpc:%v\n", jsonrpc)
+		utils.Log("xxx rpcResp.jsonrpc:%v\n", jsonrpc)
 		rpcresult := rpcResp.Result
 		state := rpcresult["state"].(string)
-		fmt.Printf("xxx rpcResp.Result.state:%v\n", state)
+		utils.Log("xxx rpcResp.Result.state:%v\n", state)
 	*/
 
 	rpcResponse = rpcResp
-	fmt.Printf("xxx rpcResponse:%v\n", rpcResponse)
+	utils.Log("xxx doCall() rpcResponse:", rpcResponse)
 	/*
 		decoder := json.NewDecoder(httpResponse.Body)
 		decoder.DisallowUnknownFields()
@@ -291,7 +295,7 @@ func (client *rpcClient) doCall(RPCRequest *RPCRequest) (*RPCResponse, error) {
 
 	// parsing error
 	if err != nil && err.Error() != "EOF" {
-		fmt.Printf("xxx doCall :httpResponse parsing error.....\n") //chenhui
+		utils.Log("xxx doCall :httpResponse parsing error.....") //chenhui
 		// if we have some http error, return it
 		if httpResponse.StatusCode >= 400 {
 			return nil, &HTTPError{
@@ -305,7 +309,7 @@ func (client *rpcClient) doCall(RPCRequest *RPCRequest) (*RPCResponse, error) {
 
 	// response body empty
 	if rpcResponse == nil {
-		fmt.Printf("xxx doCall :rpcResponse is null .....\n") //chenhui
+		utils.Log("xxx doCall :rpcResponse is null .....") //chenhui
 		// if we have some http error, return it
 		if httpResponse.StatusCode >= 400 {
 			return nil, &HTTPError{

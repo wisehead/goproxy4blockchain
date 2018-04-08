@@ -26,40 +26,75 @@ type RPCRequest struct {
 }
 
 func send(conn net.Conn) {
-	for i := 0; i < 6; i++ {
-		//session := GetSession()
-		message := &Msg{
-			Meta: map[string]interface{}{
-				"meta": "test",
-				"ID":   strconv.Itoa(i),
+	//for i := 0; i < 6; i++ {
+	//session := GetSession()
+	//first message source-state
+	message := &Msg{
+		Meta: map[string]interface{}{
+			"meta": "test",
+			"ID":   strconv.Itoa(1),
+		},
+		Content: RPCRequest{
+			Method: "source-state",
+			Params: map[string]interface{}{
+				"key":     "00000000000000000000000000000001",
+				"channel": "vvtrip",
 			},
-			Content: RPCRequest{
-				Method: "source-state",
-				Params: map[string]interface{}{
-					"key":     "00000000000000000000000000000001",
-					"channel": "vvtrip",
+			ID:      0,
+			JSONRPC: "2.0",
+		},
+		/*
+			Content: Msg{
+				Meta: map[string]interface{}{
+					"author": "nucky lu",
 				},
-				ID:      0,
-				JSONRPC: "2.0",
+				Content: session,
 			},
-			/*
-				Content: Msg{
-					Meta: map[string]interface{}{
-						"author": "nucky lu",
-					},
-					Content: session,
-				},
-			*/
-		}
-		result, _ := json.Marshal(message)
-		conn.Write(utils.Enpack((result)))
-		buf := make([]byte, 1024) //定义一个切片的长度是1024。
-		n, err := conn.Read(buf)  //接收到的内容大小。
-		utils.CheckError(err)
-		utils.Log("receiving ", n, " bytes response from Proxy: ", string(buf[:n]))
-		//conn.Write([]byte(message))
-		//time.Sleep(1 * time.Second)
+		*/
 	}
+	result, _ := json.Marshal(message)
+	conn.Write(utils.Enpack((result)))
+	buf := make([]byte, 1024) //定义一个切片的长度是1024。
+	n, err := conn.Read(buf)  //接收到的内容大小。
+	utils.CheckError(err)
+	utils.Log("receiving ", n, " bytes response from Proxy: ", string(buf[:n]))
+	//conn.Write([]byte(message))
+	time.Sleep(1 * time.Second)
+
+	//2nd message
+	message = &Msg{
+		Meta: map[string]interface{}{
+			"meta": "test",
+			"ID":   strconv.Itoa(2),
+		},
+		Content: RPCRequest{
+			Method: "source-transactions",
+			Params: map[string]interface{}{
+				"key":     "00000000000000000000000000000001",
+				"channel": "vvtrip",
+			},
+			ID:      0,
+			JSONRPC: "2.0",
+		},
+		/*
+			Content: Msg{
+				Meta: map[string]interface{}{
+					"author": "nucky lu",
+				},
+				Content: session,
+			},
+		*/
+	}
+	result, _ = json.Marshal(message)
+	conn.Write(utils.Enpack((result)))
+	buf = make([]byte, 1024) //定义一个切片的长度是1024。
+	n, err = conn.Read(buf)  //接收到的内容大小。
+	utils.CheckError(err)
+	utils.Log("receiving ", n, " bytes response from Proxy: ", string(buf[:n]))
+	//conn.Write([]byte(message))
+	time.Sleep(1 * time.Second)
+
+	//}
 	fmt.Println("send over")
 	defer conn.Close()
 }
