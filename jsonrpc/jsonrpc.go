@@ -265,7 +265,6 @@ func (client *rpcClient) doCall(RPCRequest *RPCRequest) (*RPCResponse, error) {
 
 	var rpcResponse *RPCResponse
 
-	//chenhui
 	var rpcResp = new(RPCResponse)
 	//buf := make([]byte, 1024)
 	//httpResponse.Body.Read(buf)
@@ -389,7 +388,6 @@ func (RPCResponse *RPCResponse) GetInt() (int64, error) {
 // GetFloat converts the rpc response to float64 and returns it.
 //
 // If result was not an float64 an error is returned.
-/*
 func (RPCResponse *RPCResponse) GetFloat() (float64, error) {
 	val, ok := RPCResponse.Result.(json.Number)
 	if !ok {
@@ -415,11 +413,10 @@ func (RPCResponse *RPCResponse) GetBool() (bool, error) {
 
 	return val, nil
 }
-*/
+
 // GetString converts the rpc response to a string and returns it.
 //
 // If result was not a string an error is returned.
-/*
 func (RPCResponse *RPCResponse) GetString() (string, error) {
 	val, ok := RPCResponse.Result.(string)
 	if !ok {
@@ -428,7 +425,7 @@ func (RPCResponse *RPCResponse) GetString() (string, error) {
 
 	return val, nil
 }
-*/
+
 // GetObject converts the rpc response to an arbitrary type.
 //
 // The function works as you would expect it from json.Unmarshal()

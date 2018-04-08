@@ -15,15 +15,7 @@ import (
 //我在Server的内部加入一层Router,通过Router对通过Socket发来的信息，通过我们设定的规则进行解析判断后，调用相关的Controller进行任务的分发处理。
 //在这个过程中不仅Controller彼此独立，匹配规则和Controller之间也是相互独立的。
 
-/*
-// RPCRequest represents a JSON-RPC request object.
-type RPCRequest struct {
-	Method  string      `json:"method"`
-	Params  interface{} `json:"params,omitempty"`
-	ID      uint        `json:"id"` //chenhui
-	JSONRPC string      `json:"jsonrpc"`
-}
-*/
+//ResultState is the result strunct.
 type ResultState struct {
 	State string `json:"state"`
 }
@@ -38,11 +30,13 @@ type RPCResponseState struct {
 	ID    uint      `json:"id"`
 }
 
+//Timestamp is to describ the timestamp.
 type Timestamp struct {
 	Nanos   uint32 `json:"nanos"`
 	Seconds uint32 `json:"seconds"`
 }
 
+//ResultTransaction is the struct of result of source-transactions message.
 type ResultTransaction struct {
 	Timestamp Timestamp `json:"timestamp"`
 	Tx_id     string    `json:"tx_id"`
