@@ -24,6 +24,71 @@ type RPCRequest struct {
 	JSONRPC string      `json:"jsonrpc"`
 }
 */
+type ResultState struct {
+	State string `json:"state"`
+}
+
+//RPCResponseState is the strunct for source-state message response.
+type RPCResponseState struct {
+	JSONRPC string      `json:"jsonrpc"`
+	Result  ResultState `json:"result,omitempty"`
+	//Result map[string]interface{} `json:"result,omitempty"`
+	//Result *json.RawMessage `json:"result,omitempty"`
+	Error *RPCError `json:"error,omitempty"`
+	ID    uint      `json:"id"`
+}
+
+type Timestamp struct {
+	Nanos   uint32 `json:"nanos"`
+	Seconds uint32 `json:"seconds"`
+}
+
+type ResultTransaction struct {
+	Timestamp Timestamp `json:"timestamp"`
+	Tx_id     string    `json:"tx_id"`
+	Value     string    `json:"value"`
+}
+
+/*
+{
+    "jsonrpc": "2.0",
+    "id": 0,
+    "result": [
+        {
+            "timestamp": {
+                "nanos": 970000000,
+                "seconds": 1522853782
+            },
+            "tx_id": "f3c691ecde3fd667bb1afee96931aa17082f77e8b0e2eaeb71a97e4b26f594f7",
+            "value": "1002"
+        }
+    ]
+}
+*/
+//RPCResponseState is the strunct for source-state message response.
+type RPCResponseTransaction struct {
+	JSONRPC string              `json:"jsonrpc"`
+	Result  []ResultTransaction `json:"result,omitempty"`
+	//Result map[string]interface{} `json:"result,omitempty"`
+	//Result *json.RawMessage `json:"result,omitempty"`
+	Error *RPCError `json:"error,omitempty"`
+	ID    uint      `json:"id"`
+}
+
+// RPCError represents a JSON-RPC error object if an RPC error occurred.
+//
+// Code: holds the error code
+//
+// Message: holds a short error message
+//
+// Data: holds additional error data, may be nil
+//
+// See: http://www.jsonrpc.org/specification#error_object
+type RPCError struct {
+	Code    int         `json:"code"`
+	Message string      `json:"message"`
+	Data    interface{} `json:"data,omitempty"`
+}
 
 //MethodParams for JSON-RPC 2.0 parameters.
 type MethodParams struct {
@@ -127,26 +192,88 @@ func sendJsonrpcRequest(method string) (*jsonrpc.RPCResponse, error) {
 	//rpcClient := jsonrpc.NewClient("http://my-rpc-service:8080/rpc")
 	rpcClient := jsonrpc.NewClient("https://www.ninechain.net/api/v2")
 	if rpcClient == nil {
-		//fmt.Println("rpcClient is nil!")
-		utils.Log("rpcClient is nil!")
+		utils.Log("rxxx sendJsonrpcRequest() pcClient is nil!")
 		return nil, err
 	}
 	rpcResp, err := rpcClient.Call(method, &MethodParams{Channel: "vvtrip", Key: "00000000000000000000000000000001"})
 	if err != nil {
-		//utils.LOG.Error("rpcClient.CallFor failed: " + err.Error())
-		//fmt.Printf("xxx err for rpcClient.Call:%v", err.Error())
 		utils.Log("xxx err for rpcClient.Call:", err.Error())
+		return nil, err
 	}
-	id := rpcResp.ID
-	utils.Log("xxx sendJsonrpcRequest() rpcResp.id:", id)
-	jsonrpc := rpcResp.JSONRPC
-	utils.Log("xxx sendJsonrpcRequest() rpcResp.jsonrpc:", jsonrpc)
+	//id := rpcResp.ID
+	//utils.Log("xxx sendJsonrpcRequest() rpcResp.id:", id)
+	//jsonrpc := rpcResp.JSONRPC
+	//utils.Log("xxx sendJsonrpcRequest() rpcResp.jsonrpc:", jsonrpc)
 	//rpcresult := rpcResp.Result
 	//fix-me:
 	//need serveral parser functions to parse different result structs.
 	//tx_id := rpcresult["tx_id"].(string)
 	//utils.Log("xxx sendJsonrpcRequest() rpcResp.Result.tx_id:", tx_id)
 	return rpcResp, nil
+}
+
+//verifyStateMsg is to parse and verify the format of source-state message.
+func verifyStateMsg(rpcResp *jsonrpc.RPCResponse) (bool, error) {
+
+	mirrormsg, err := json.Marshal(rpcResp)
+	utils.CheckError(err)
+	utils.Log("xxx verifyStateMsg() mirrormsg:", string(mirrormsg))
+
+	var rpcRespState = new(RPCResponseState)
+	json.Unmarshal(mirrormsg, &rpcRespState)
+
+	id := rpcRespState.ID
+	utils.Log("xxx verifyStateMsg() rpcRespState.id:", id)
+	jsonrpc := rpcRespState.JSONRPC
+	utils.Log("xxx verifyStateMsg() rpcRespState.jsonrpc:", jsonrpc)
+	rpcresult := rpcRespState.Result
+	state := rpcresult.State
+	utils.Log("xxx verifyStateMsg() rpcRespState.Result.state:", state)
+
+	return true, nil
+}
+
+//verifyTransactionMsg is to parse and verify the format of source-state message.
+func verifyTransactionMsg(rpcResp *jsonrpc.RPCResponse) (bool, error) {
+
+	mirrormsg, err := json.Marshal(rpcResp)
+	utils.CheckError(err)
+	utils.Log("xxx verifyTransactionMsg() mirrormsg:", string(mirrormsg))
+
+	var rpcRespTx = new(RPCResponseTransaction)
+	json.Unmarshal(mirrormsg, &rpcRespTx)
+
+	id := rpcRespTx.ID
+	utils.Log("xxx verifyTransactionMsg() rpcRespTx.id:", id)
+	jsonrpc := rpcRespTx.JSONRPC
+	utils.Log("xxx verifyTransactionMsg() rpcRespTx.jsonrpc:", jsonrpc)
+	rpcresults := rpcRespTx.Result
+	for i := range rpcresults {
+		//表示遍历数组，而i表示的是数组的下标值，
+		//result[i]表示获得第i个json对象即JSONObject
+		//result[i]通过.字段名称即可获得指定字段的值
+		tx_id := rpcresults[i].Tx_id
+		utils.Log("xxx verifyTransactionMsg() rpcRespTx.Result.Tx_id:", tx_id)
+		value := rpcresults[i].Value
+		utils.Log("xxx verifyTransactionMsg() rpcRespTx.Result.Value:", value)
+		timestamp := rpcresults[i].Timestamp
+		nanos := timestamp.Nanos
+		seconds := timestamp.Seconds
+		utils.Log("xxx verifyTransactionMsg() rpcRespTx.Result.Timestamp.Seconds:", seconds, "Nanos:", nanos)
+	}
+
+	return true, nil
+}
+
+func verifyMsg(method string, rpcResp *jsonrpc.RPCResponse) (bool, error) {
+	if method == "source-state" {
+		return verifyStateMsg(rpcResp)
+	} else {
+		if method == "source-transactions" {
+			return verifyTransactionMsg(rpcResp)
+		}
+	}
+	return false, nil
 }
 
 //this is a sample of how to setup a controller;
@@ -185,10 +312,15 @@ func (echoCtrl *EchoController) Excute(message Msg) []byte {
 		Log("rpcRequest.Params.Channel:", channel)
 	*/
 	rpcResp, err := sendJsonrpcRequest(method)
-	respMsg, err := json.Marshal(rpcResp)
-	utils.Log("echo the message:", string(respMsg))
-	utils.CheckError(err)
-	return respMsg
+
+	isok, err := verifyMsg(method, rpcResp)
+	if isok {
+		respMsg, err := json.Marshal(rpcResp)
+		utils.Log("echo the message:", string(respMsg))
+		utils.CheckError(err)
+		return respMsg
+	}
+	return nil
 }
 
 func init() {
