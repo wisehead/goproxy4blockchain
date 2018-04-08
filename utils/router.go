@@ -14,6 +14,7 @@ import (
 //我在Server的内部加入一层Router,通过Router对通过Socket发来的信息，通过我们设定的规则进行解析判断后，调用相关的Controller进行任务的分发处理。
 //在这个过程中不仅Controller彼此独立，匹配规则和Controller之间也是相互独立的。
 
+/*
 // RPCRequest represents a JSON-RPC request object.
 type RPCRequest struct {
 	Method  string      `json:"method"`
@@ -21,6 +22,7 @@ type RPCRequest struct {
 	ID      uint        `json:"id"` //chenhui
 	JSONRPC string      `json:"jsonrpc"`
 }
+*/
 
 //MethodParams for JSON-RPC 2.0 parameters.
 type MethodParams struct {
@@ -31,7 +33,7 @@ type MethodParams struct {
 //Msg defined between app client and goproxy4blockchain
 type Msg struct {
 	Meta    map[string]interface{} `json:"meta"`
-	Content RPCRequest             `json:"content"`
+	Content jsonrpc.RPCRequest     `json:"content"`
 }
 
 /*
@@ -111,6 +113,7 @@ func TaskDeliver(postdata []byte, conn net.Conn) {
 
 		if pred.(func(entermsg Msg) bool)(entermsg) {
 			result := act.(Controller).Excute(entermsg)
+			Log("sending result to app client: ", result)
 			conn.Write(result)
 			return
 		}
@@ -118,13 +121,14 @@ func TaskDeliver(postdata []byte, conn net.Conn) {
 }
 
 //sendJsonrpcRequest is to send request to block chain service.
-func sendJsonrpcRequest() {
+func sendJsonrpcRequest() (*jsonrpc.RPCResponse, error) {
+	var err error
 	//rpcClient := jsonrpc.NewClient("http://my-rpc-service:8080/rpc")
 	rpcClient := jsonrpc.NewClient("https://www.ninechain.net/api/v2")
 	if rpcClient == nil {
 		//fmt.Println("rpcClient is nil!")
 		Log("rpcClient is nil!")
-		return
+		return nil, err
 	}
 	rpcResp, err := rpcClient.Call("source-state", &MethodParams{Channel: "vvtrip", Key: "00000000000000000000000000000001"})
 	if err != nil {
@@ -142,6 +146,7 @@ func sendJsonrpcRequest() {
 	state := rpcresult["state"].(string)
 	//fmt.Printf("xxx rpcResp.Result.state:%v\n", state)
 	Log("xxx rpcResp.Result.state:", state)
+	return rpcResp, nil
 }
 
 //this is a sample of how to setup a controller;
@@ -154,11 +159,12 @@ type EchoController struct {
 
 //Excute is the function that each Controller needs to implement.
 func (echoCtrl *EchoController) Excute(message Msg) []byte {
-	mirrormsg, err := json.Marshal(message)
-	sendJsonrpcRequest()
-	Log("echo the message:", string(mirrormsg))
+	//mirrormsg, err := json.Marshal(message)
+	rpcResp, err := sendJsonrpcRequest()
+	respMsg, err := json.Marshal(rpcResp)
+	Log("echo the message:", string(respMsg))
 	CheckError(err)
-	return mirrormsg
+	return respMsg
 }
 
 func init() {

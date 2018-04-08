@@ -53,8 +53,12 @@ func send(conn net.Conn) {
 		}
 		result, _ := json.Marshal(message)
 		conn.Write(utils.Enpack((result)))
+		buf := make([]byte, 1024) //定义一个切片的长度是1024。
+		n, err := conn.Read(buf)  //接收到的内容大小。
+		utils.CheckError(err)
+		utils.Log("receiving ", n, " bytes response from Proxy: ", string(buf[:n]))
 		//conn.Write([]byte(message))
-		time.Sleep(1 * time.Second)
+		//time.Sleep(1 * time.Second)
 	}
 	fmt.Println("send over")
 	defer conn.Close()

@@ -54,7 +54,6 @@ func startServer(configpath string) {
 
 //handle the connection
 func handleConnection(conn net.Conn, timeout int) {
-
 	tmpBuffer := make([]byte, 0)
 
 	buffer := make([]byte, 1024)
